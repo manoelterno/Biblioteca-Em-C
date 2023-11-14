@@ -2,6 +2,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+void adicionar_usuario();
+void menu_usuario();
+void menu();
 
 typedef struct data
 {
@@ -42,11 +45,6 @@ typedef struct reserva
     Livro *livro_reservado;
 } Reserva;
 
-//variaveis globais
-Livro livros[20];
-Usuario usuarios[10];
-Reserva reservas[20];
-
 void menu()
 {
     printf("---MENU PRINCIPAL---\n\n");
@@ -84,6 +82,20 @@ void menu_usuario()
             break;
         }
     }
+}
+
+void adicionar_usuario(Usuario *usuarios, int *quantidade_usuarios)
+{
+    system("cls");
+    printf("Digite os dados do usuario:\n\n");
+    printf("Nome do usuario: ");
+    gets(usuarios[*quantidade_usuarios].nome);
+    printf("Endereco do usuario: ");
+    gets(usuarios[*quantidade_usuarios].endereco);
+    printf("Telefone do usuario: ");
+    scanf("%d", &usuarios[*quantidade_usuarios].telefone);
+    usuarios[*quantidade_usuarios].identificador = *quantidade_usuarios + 1;
+    *quantidade_usuarios = *quantidade_usuarios + 1;
 }
 
 int main()
