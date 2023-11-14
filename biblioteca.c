@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-void adicionar_usuario();
-void menu_usuario();
-void menu();
+
 typedef struct data
 {
     int dia, mes, ano;
@@ -32,8 +30,8 @@ typedef struct usuario
     int identificador;
     char nome[30];
     char endereco[50];
-    // com certeza é melhor string do q int
     int telefone;
+    struct usuario *prox;
 } Usuario;
 
 typedef struct reserva
@@ -44,6 +42,60 @@ typedef struct reserva
     Livro *livro_reservado;
 } Reserva;
 
+void adicionar_usuario();
+void menu_usuario();
+void menu();
+void imprimir_usuarios();
+void menu_relatorio();
+
+void imprimir_usuarios(Usuario **usuarios)
+{
+    Usuario *atual = *usuarios;
+    
+    if (atual == NULL)
+    {
+        printf("A lista de usuarios esta vazia.\n");
+    }
+    else
+    {
+        while (atual != NULL)
+        {
+            printf("ID: %d, Nome: %s, Endereco: %s, Telefone: %d\n", atual->identificador, atual->nome, atual->endereco, atual->telefone);
+            atual = atual->prox;
+        }
+    }
+    system("pause");
+}
+
+void menu_relatorio(Usuario **usuarios)
+{
+    int escolha = 0;
+    while (escolha != 4)
+    {
+        system("cls");
+        printf("---RELATORIOS---\n\n");
+        printf("Digite sua escolha\n");
+        printf("1 - Listar usuarios\n");
+        printf("2 - Listar livros\n");
+        printf("3 - Listar reservas\n");
+        printf("4 - Voltar\n\n");
+        scanf("%d", &escolha);
+        getchar();
+        switch (escolha)    
+        {
+        case 1:
+            // endereco de usuarios na main
+            imprimir_usuarios(usuarios);
+            break;
+        case 2:
+            
+            break;
+        case 3:
+            
+            break;
+        }
+    }
+}
 
 void menu()
 {
@@ -56,7 +108,8 @@ void menu()
     printf("5 - Sair\n\n");
 }
 
-void menu_usuario(Usuario *usuarios, int *quantidade_usuarios)
+// preciso passar o endereço do ponteiro usuarios para modifica-lo na main (ponteiro de ponteiro)
+void menu_usuario(Usuario **usuarios, int *quantidade_usuarios)
 {
     int escolha = 0;
     while (escolha != 4)
@@ -70,45 +123,43 @@ void menu_usuario(Usuario *usuarios, int *quantidade_usuarios)
         printf("4 - Voltar\n\n");
         scanf("%d", &escolha);
         getchar();
-        switch (escolha)
+        switch (escolha)    
         {
         case 1:
+            // endereco de usuarios na main
             adicionar_usuario(usuarios, quantidade_usuarios);
             break;
         case 2:
-            //editar_usuario();
+            // editar_usuario();
             break;
         case 3:
-            //adicionar_usuario();
+            // adicionar_usuario();
             break;
         }
     }
 }
 
-void adicionar_usuario(Usuario *usuarios, int *quantidade_usuarios)
+void adicionar_usuario(Usuario **usuarios, int *quantidade_usuarios)
 {
+    Usuario *novoUsuario = (Usuario *)malloc(sizeof(Usuario));
     system("cls");
     printf("Digite os dados do usuario:\n\n");
-    // uma forma de adicionar que funciona (foi testado):
-    /*
-    scanf("Nome: %s Endereco: %s Telefone: %d", usuarios[*quantidade_usuarios].nome, usuarios[*quantidade_usuarios].endereco, 
-    &usuarios[*quantidade_usuarios].telefone);
-    usuarios[*quantidade_usuarios].identificador = *quantidade_usuarios + 1;
-    */
     printf("Nome do usuario: ");
-    gets(usuarios[*quantidade_usuarios].nome);
+    // mesma coisa que gets(*novoUsuario.nome);
+    gets(novoUsuario->nome);
     printf("Endereco do usuario: ");
-    gets(usuarios[*quantidade_usuarios].endereco);
+    gets(novoUsuario->endereco);
     printf("Telefone do usuario: ");
-    scanf("%d", &usuarios[*quantidade_usuarios].telefone);
-    usuarios[*quantidade_usuarios].identificador = *quantidade_usuarios + 1;
+    scanf("%d", &novoUsuario->telefone);
+    novoUsuario->identificador = *quantidade_usuarios + 1;
     *quantidade_usuarios = *quantidade_usuarios + 1;
+    novoUsuario->prox = *usuarios;
+    *usuarios = novoUsuario;
 }
+
 int main()
 {
-   // Livro livros[20];
-    Usuario usuarios[10];
-  //  Reserva reservas[20];
+    Usuario *usuarios = NULL;
     int escolha = 0;
     int quantidade_usuarios = 0;
     // quantidade_livros = 0, quantidade_reservas = 0;
@@ -120,7 +171,7 @@ int main()
         switch (escolha)
         {
         case 1:
-            menu_usuario(usuarios, &quantidade_usuarios);
+            menu_usuario(&usuarios, &quantidade_usuarios);
             break;
         case 2:
             // menu_livro();
@@ -129,7 +180,7 @@ int main()
             // menu_usuario();
             break;
         case 4:
-            //  menu_relatorio();
+            menu_relatorio(&usuarios);
             break;
         default:
             break;
