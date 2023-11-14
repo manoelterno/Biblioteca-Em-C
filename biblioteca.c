@@ -1,11 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
 void adicionar_usuario();
 void menu_usuario();
 void menu();
-
 typedef struct data
 {
     int dia, mes, ano;
@@ -34,6 +32,7 @@ typedef struct usuario
     int identificador;
     char nome[30];
     char endereco[50];
+    // com certeza é melhor string do q int
     int telefone;
 } Usuario;
 
@@ -44,6 +43,7 @@ typedef struct reserva
     Usuario *usuario_responsavel;
     Livro *livro_reservado;
 } Reserva;
+
 
 void menu()
 {
@@ -56,7 +56,7 @@ void menu()
     printf("5 - Sair\n\n");
 }
 
-void menu_usuario()
+void menu_usuario(Usuario *usuarios, int *quantidade_usuarios)
 {
     int escolha = 0;
     while (escolha != 4)
@@ -69,10 +69,11 @@ void menu_usuario()
         printf("3 - Excluir usuario\n");
         printf("4 - Voltar\n\n");
         scanf("%d", &escolha);
+        getchar();
         switch (escolha)
         {
         case 1:
-            //adicionar_usuario();
+            adicionar_usuario(usuarios, quantidade_usuarios);
             break;
         case 2:
             //editar_usuario();
@@ -88,6 +89,12 @@ void adicionar_usuario(Usuario *usuarios, int *quantidade_usuarios)
 {
     system("cls");
     printf("Digite os dados do usuario:\n\n");
+    // uma forma de adicionar que funciona (foi testado):
+    /*
+    scanf("Nome: %s Endereco: %s Telefone: %d", usuarios[*quantidade_usuarios].nome, usuarios[*quantidade_usuarios].endereco, 
+    &usuarios[*quantidade_usuarios].telefone);
+    usuarios[*quantidade_usuarios].identificador = *quantidade_usuarios + 1;
+    */
     printf("Nome do usuario: ");
     gets(usuarios[*quantidade_usuarios].nome);
     printf("Endereco do usuario: ");
@@ -97,10 +104,14 @@ void adicionar_usuario(Usuario *usuarios, int *quantidade_usuarios)
     usuarios[*quantidade_usuarios].identificador = *quantidade_usuarios + 1;
     *quantidade_usuarios = *quantidade_usuarios + 1;
 }
-
 int main()
 {
+   // Livro livros[20];
+    Usuario usuarios[10];
+  //  Reserva reservas[20];
     int escolha = 0;
+    int quantidade_usuarios = 0;
+    // quantidade_livros = 0, quantidade_reservas = 0;
     while (escolha != 5)
     {
         system("cls");
@@ -109,7 +120,7 @@ int main()
         switch (escolha)
         {
         case 1:
-            menu_usuario();
+            menu_usuario(usuarios, &quantidade_usuarios);
             break;
         case 2:
             // menu_livro();
