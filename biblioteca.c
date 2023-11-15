@@ -1,6 +1,15 @@
+/*
+    @Trabalho Lógica de Programação
+    @Autores: Guilherme Lopes e João Manoel
+    @Curso: Engenharia de Computação
+    @Problema: Banco de Dados de uma Biblioteca
+*/
+
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 
 typedef struct data
 {
@@ -42,29 +51,146 @@ typedef struct reserva
     Livro *livro_reservado;
 } Reserva;
 
-void adicionar_usuario();
-void menu_usuario();
-void menu();
-void imprimir_usuarios();
-void menu_relatorio();
 
-void imprimir_usuarios(Usuario **usuarios)
+void menu();
+void menu_usuario();
+void adicionar_usuario();
+void excluir_usuario();
+void editar_usuario();
+void menu_relatorio();
+void imprimir_usuarios();
+void liberar_usuarios();
+
+
+void menu()
 {
-    Usuario *atual = *usuarios;
-    
-    if (atual == NULL)
+    printf("---MENU PRINCIPAL---\n\n");
+    printf("Digite sua escolha\n");
+    printf("1 - Usuario\n");
+    printf("2 - Livro\n");
+    printf("3 - Reserva\n");
+    printf("4 - Relatorios\n");
+    printf("5 - Sair\n\n");
+}
+// preciso passar o endereço do ponteiro usuarios para modifica-lo na main (ponteiro de ponteiro)
+void menu_usuario(Usuario **usuarios, int *quantidade_usuarios)
+{
+    int escolha = 0;
+    while (escolha != 4)
     {
-        printf("A lista de usuarios esta vazia.\n");
-    }
-    else
-    {
-        while (atual != NULL)
+        system("cls");
+        printf("---USUARIOS---\n\n");
+        printf("Digite sua escolha\n");
+        printf("1 - Adicionar usuario\n");
+        printf("2 - Editar usuario\n");
+        printf("3 - Excluir usuario\n");
+        printf("4 - Voltar\n\n");
+        scanf("%d", &escolha);
+        getchar();
+        switch (escolha)
         {
-            printf("ID: %d, Nome: %s, Endereco: %s, Telefone: %d\n", atual->identificador, atual->nome, atual->endereco, atual->telefone);
-            atual = atual->prox;
+        case 1:
+            // endereco de usuarios na main
+            adicionar_usuario(usuarios, quantidade_usuarios);
+            break;
+        case 2:
+            editar_usuario(usuarios);
+            break;
+        case 3:
+            excluir_usuario(usuarios);
+            break;
         }
     }
+}
+
+void adicionar_usuario(Usuario **usuarios, int *quantidade_usuarios)
+{
+    Usuario *novoUsuario = (Usuario *)malloc(sizeof(Usuario));
+    system("cls");
+    printf("---ADICIONAR USUARIO---\n\n");
+    printf("Digite os dados do usuario:\n\n");
+    printf("Nome do usuario: ");
+    // mesma coisa que gets(*novoUsuario.nome);
+    gets(novoUsuario->nome);
+    printf("Endereco do usuario: ");
+    gets(novoUsuario->endereco);
+    printf("Telefone do usuario: ");
+    scanf("%d", &novoUsuario->telefone);
+    novoUsuario->identificador = *quantidade_usuarios + 1;
+    *quantidade_usuarios = *quantidade_usuarios + 1;
+    novoUsuario->prox = *usuarios;
+    *usuarios = novoUsuario;
+}
+
+void liberar_usuarios(Usuario **usuarios)
+{
+    Usuario *atual = *usuarios;
+    while (atual != NULL)
+    {
+        Usuario *prox = atual->prox;
+        free(atual);
+        atual = prox;
+    }
+}
+
+void excluir_usuario(Usuario **usuarios)
+{
+    system("cls");
+    printf("---EXCLUIR USUARIO---\n\n");
+    printf("Digite o identificador do usuario:\n\n");
+    int id;
+    scanf("%d", &id);
+    int v = 1;
+    Usuario *atual = *usuarios;
+    Usuario *anterior = NULL;
+    while (atual != NULL)
+    {
+        if (atual->identificador == id)
+        {
+            v = 0;
+            if (anterior == NULL)
+                *usuarios = atual->prox;
+            else
+                anterior->prox = atual->prox; 
+            free(atual);
+            break;
+        }
+        anterior = atual;
+        atual = atual->prox;
+    }
+    if (v)
+        printf("\nUsuario nao encontrado\n");
+    else
+        printf("\nUsuario excluido com sucesso\n");
     system("pause");
+}
+
+void editar_usuario(Usuario **usuarios)
+{
+    system("cls");
+    printf("---EDITAR USUARIO---\n\n");
+    printf("Digite o identificador do usuario:\n\n");
+    int id;
+    scanf("%d", &id);
+    getchar();
+    Usuario *atual = *usuarios;
+    while (atual != NULL)
+    {
+        if(atual->identificador == id)
+        {
+            printf("\nNome atual: %s\n", atual->nome);
+            printf("Digite o novo nome do usuario:\n");
+            gets(atual->nome);
+            printf("\nEndereco atual: %s\n", atual->endereco);
+            printf("Digite o novo endereco do usuario:\n");
+            gets(atual->endereco);
+            printf("\nTelefone atual: %d\n", atual->telefone);
+            printf("Digite o novo telefone do usuario:\n");
+            scanf("%d", &atual->telefone);
+            break;
+        }
+        atual = atual->prox;
+    }
 }
 
 void menu_relatorio(Usuario **usuarios)
@@ -81,81 +207,42 @@ void menu_relatorio(Usuario **usuarios)
         printf("4 - Voltar\n\n");
         scanf("%d", &escolha);
         getchar();
-        switch (escolha)    
+        switch (escolha)
         {
         case 1:
             // endereco de usuarios na main
             imprimir_usuarios(usuarios);
             break;
         case 2:
-            
+
             break;
         case 3:
-            
+
             break;
         }
     }
 }
 
-void menu()
+void imprimir_usuarios(Usuario **usuarios)
 {
-    printf("---MENU PRINCIPAL---\n\n");
-    printf("Digite sua escolha\n");
-    printf("1 - Usuario\n");
-    printf("2 - Livro\n");
-    printf("3 - Reserva\n");
-    printf("4 - Relatorios\n");
-    printf("5 - Sair\n\n");
-}
-
-// preciso passar o endereço do ponteiro usuarios para modifica-lo na main (ponteiro de ponteiro)
-void menu_usuario(Usuario **usuarios, int *quantidade_usuarios)
-{
-    int escolha = 0;
-    while (escolha != 4)
-    {
-        system("cls");
-        printf("---USUARIOS---\n\n");
-        printf("Digite sua escolha\n");
-        printf("1 - Adicionar usuario\n");
-        printf("2 - Editar usuario\n");
-        printf("3 - Excluir usuario\n");
-        printf("4 - Voltar\n\n");
-        scanf("%d", &escolha);
-        getchar();
-        switch (escolha)    
-        {
-        case 1:
-            // endereco de usuarios na main
-            adicionar_usuario(usuarios, quantidade_usuarios);
-            break;
-        case 2:
-            // editar_usuario();
-            break;
-        case 3:
-            // adicionar_usuario();
-            break;
-        }
-    }
-}
-
-void adicionar_usuario(Usuario **usuarios, int *quantidade_usuarios)
-{
-    Usuario *novoUsuario = (Usuario *)malloc(sizeof(Usuario));
     system("cls");
-    printf("Digite os dados do usuario:\n\n");
-    printf("Nome do usuario: ");
-    // mesma coisa que gets(*novoUsuario.nome);
-    gets(novoUsuario->nome);
-    printf("Endereco do usuario: ");
-    gets(novoUsuario->endereco);
-    printf("Telefone do usuario: ");
-    scanf("%d", &novoUsuario->telefone);
-    novoUsuario->identificador = *quantidade_usuarios + 1;
-    *quantidade_usuarios = *quantidade_usuarios + 1;
-    novoUsuario->prox = *usuarios;
-    *usuarios = novoUsuario;
+    Usuario *atual = *usuarios;
+
+    if (atual == NULL)
+    {
+        printf("A lista de usuarios esta vazia.\n");
+    }
+    else
+    {
+        while (atual != NULL)
+        {
+            printf("ID: %d, Nome: %s, Endereco: %s, Telefone: %d\n", atual->identificador, atual->nome, atual->endereco, atual->telefone);
+            atual = atual->prox;
+        }
+    }
+    system("pause");
 }
+
 
 int main()
 {
@@ -186,5 +273,6 @@ int main()
             break;
         }
     }
+    liberar_usuarios(&usuarios);
     return 0;
 }
