@@ -812,8 +812,8 @@ void editar_reserva(Usuario **usuarios, Livro **livros, Reserva **reservas)
 void imprimir_reservas(Reserva **reservas, Usuario **usuarios, Livro **livros)
 {
     Reserva *reserva_atual = *reservas;
-    Usuario *usuario_atual = *usuarios;
-    Livro *livro_atual = *livros;
+    Usuario *usuario_atual;
+    Livro *livro_atual;
     if (reserva_atual == NULL)
     {
         printf("A lista de reservas esta vazia.\n");
@@ -822,6 +822,8 @@ void imprimir_reservas(Reserva **reservas, Usuario **usuarios, Livro **livros)
     {
         while (reserva_atual != NULL)
         {
+            livro_atual = *livros;
+            usuario_atual = *usuarios;
             while (usuario_atual != NULL)
             {
                 if (usuario_atual->identificador == reserva_atual->id_usuario)
