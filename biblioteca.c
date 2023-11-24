@@ -5,16 +5,16 @@
     @Problema: Banco de Dados de uma Biblioteca
 */
 
-//BIBLIOTECAS
+// BIBLIOTECAS
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
 
-//MACROS
+// MACROS
 #define MAX 50
 
-//STRUCTS
+// STRUCTS
 typedef struct data
 {
     int dia, mes, ano;
@@ -33,8 +33,8 @@ typedef struct livro
     int edicao;
     char titulo[MAX];
     char editora[MAX];
-    struct livro *prox; 
-    Autor *autores; 
+    struct livro *prox;
+    Autor *autores;
 } Livro;
 
 typedef struct usuario
@@ -48,43 +48,49 @@ typedef struct usuario
 
 typedef struct reserva
 {
+    int identificador;
     Data inicio;
     Data fim;
-    Livro *livro_reservado;
-    Usuario *usuario_responsavel;
+    int id_livro;
+    int id_usuario;
+    struct reserva *prox;
 } Reserva;
 
-//PRÓTOTIPOS DAS FUNÇÕES
-void menu(); //Função responsável por mostrar o menu principal
+// PRÓTOTIPOS DAS FUNÇÕES
+void menu(); // Função responsável por mostrar o menu principal
 
-void menu_usuario(); //Função responsável por mostrar as opcoes sobre o que pode ser feito com os usuarios
-void adicionar_usuario(); //Funcao para adicionar um usuario ao banco de dados
-void excluir_usuario(); //Funcao para excluir um usuario ao banco de dados
-void editar_usuario(); //Funcao para editar um usuario ao banco de dados
-void liberar_usuarios(); //Desalocar a memoria alocada para a lista de usuarios
+void menu_usuario();      // Função responsável por mostrar as opcoes sobre o que pode ser feito com os usuarios
+void adicionar_usuario(); // Funcao para adicionar um usuario ao banco de dados
+void excluir_usuario();   // Funcao para excluir um usuario ao banco de dados
+void editar_usuario();    // Funcao para editar um usuario ao banco de dados
+void liberar_usuarios();  // Desalocar a memoria alocada para a lista de usuarios
 
-void menu_livro(); //Função responsável por mostrar as opcoes sobre o que pode ser feito com os livros
-void adicionar_livro(); //Funcao para adicionar um livro ao banco de dados
-void excluir_livro(); //Funcao para excluir um livro ao banco de dados
-void editar_livro(); //Funcao para editar um livro ao banco de dados
-void liberar_livros(); //Desalocar a memoria alocada para a lista de livros
+void menu_livro();      // Função responsável por mostrar as opcoes sobre o que pode ser feito com os livros
+void adicionar_livro(); // Funcao para adicionar um livro ao banco de dados
+void excluir_livro();   // Funcao para excluir um livro ao banco de dados
+void editar_livro();    // Funcao para editar um livro ao banco de dados
+void liberar_livros();  // Desalocar a memoria alocada para a lista de livros
 
-void adicionar_autor(); //Funcao para adicionar um autor a um determinado livro
-void editar_autores();  //Funcao para editar os autores de um livro do banco de dados
-void liberar_autores(); //Desalocar a memoria alocada para a lista de autores
+void adicionar_autor(); // Funcao para adicionar um autor a um determinado livro
+void editar_autores();  // Funcao para editar os autores de um livro do banco de dados
+void liberar_autores(); // Desalocar a memoria alocada para a lista de autores
 
-void menu_reserva(); //Função responsável por mostrar as opcoes sobre o que pode ser feito com as reservas
-void adicionar_reserva(); //Funcao para adicionar uma reserva ao banco de dados
-void excluir_reserva(); //Funcao para excluir uma reserva ao banco de dados
-void editar_reserva();  //Funcao para editar uma reserva ao banco de dados
+void menu_reserva();      // Função responsável por mostrar as opcoes sobre o que pode ser feito com as reservas
+void adicionar_reserva(); // Funcao para adicionar uma reserva ao banco de dados
+void excluir_reserva();   // Funcao para excluir uma reserva ao banco de dados
+void editar_reserva();    // Funcao para editar uma reserva ao banco de dados
+void liberar_reservas();
 
-void menu_relatorio(); // Função responsável por mostrar as opções sobre as diferentes listagens que é possível fazer
-void imprimir_usuarios(); //Funcao para listar os usuario do banco de dados
-void imprimir_livros(); //Funcao para listar os livros do banco de dados
-void imprimir_autores(); //Funcao para listar os autores de um determinado livro do banco de dados
-void imprimir_reservas(); //Funcao para listar as reservas do banco de dados
+void menu_relatorio();    // Função responsável por mostrar as opções sobre as diferentes listagens que é possível fazer
+void imprimir_usuarios(); // Funcao para listar os usuario do banco de dados
+void imprimir_livros();   // Funcao para listar os livros do banco de dados
+void imprimir_autores();  // Funcao para listar os autores de um determinado livro do banco de dados
+void imprimir_reservas(); // Funcao para listar as reservas do banco de dados
 
-//MAIN
+int verificar_id_livro();
+int verificar_id_usuario();
+
+// MAIN
 int main()
 {
     Reserva *reservas = NULL;
@@ -100,7 +106,7 @@ int main()
         menu();
         scanf("%d", &escolha);
         getchar();
-        
+
         switch (escolha)
         {
         case 1:
@@ -110,7 +116,7 @@ int main()
             menu_livro(&livros, &quantidade_livros);
             break;
         case 3:
-            menu_reserva(&usuarios, &livros,  &reservas, &quantidade_reservas);
+            menu_reserva(&usuarios, &livros, &reservas, &quantidade_reservas);
             break;
         case 4:
             menu_relatorio(&usuarios, &livros, &reservas);
@@ -123,13 +129,14 @@ int main()
             break;
         }
     }
-    
+
     liberar_usuarios(&usuarios);
     liberar_livros(&livros);
+    liberar_reservas(&reservas);
     return 0;
 }
 
-//FUNÇÕES
+// FUNÇÕES
 
 void menu()
 {
@@ -206,7 +213,7 @@ void adicionar_usuario(Usuario **usuarios, int *quantidade_usuarios)
 
 void excluir_usuario(Usuario **usuarios)
 {
-    int id, v=1;
+    int id, v = 1;
 
     system("cls");
 
@@ -226,7 +233,7 @@ void excluir_usuario(Usuario **usuarios)
             if (usuario_anterior == NULL)
                 *usuarios = usuario_atual->prox;
             else
-                usuario_anterior->prox = usuario_atual->prox; 
+                usuario_anterior->prox = usuario_atual->prox;
             free(usuario_atual);
             break;
         }
@@ -247,7 +254,7 @@ void editar_usuario(Usuario **usuarios)
     int id;
 
     system("cls");
-    
+
     printf("---EDITAR USUARIO---\n\n");
     printf("Digite o identificador do usuario: ");
     scanf("%d", &id);
@@ -257,7 +264,7 @@ void editar_usuario(Usuario **usuarios)
 
     while (usuario_atual != NULL)
     {
-        if(usuario_atual->identificador == id)
+        if (usuario_atual->identificador == id)
         {
             printf("\nNome atual: %s\n", usuario_atual->nome);
             printf("Digite o novo nome do usuario: ");
@@ -309,7 +316,8 @@ void liberar_usuarios(Usuario **usuarios)
     }
 }
 
-void menu_livro(Livro **livros, int *quantidade_livros){
+void menu_livro(Livro **livros, int *quantidade_livros)
+{
     int escolha = 0;
 
     while (escolha != 4)
@@ -353,7 +361,7 @@ void adicionar_livro(Livro **livros, int *quantidade_livros)
 
     novoLivro->autores = NULL;
 
-    printf("---ADICIONAR Livro---\n\n");
+    printf("---ADICIONAR LIVRO---\n\n");
     printf("Digite os dados do livro:\n\n");
 
     printf("Titulo do livro: ");
@@ -382,7 +390,7 @@ void excluir_livro(Livro **livros)
 {
     Livro *livro_atual = *livros;
     Livro *livro_anterior = NULL;
-    int id, v=1;
+    int id, v = 1;
 
     system("cls");
 
@@ -399,7 +407,7 @@ void excluir_livro(Livro **livros)
             if (livro_anterior == NULL)
                 *livros = livro_atual->prox;
             else
-                livro_anterior->prox = livro_atual->prox; 
+                livro_anterior->prox = livro_atual->prox;
             liberar_autores(&livro_atual);
             free(livro_atual);
             break;
@@ -421,7 +429,7 @@ void editar_livro(Livro **livros)
     int id;
 
     system("cls");
-    
+
     printf("---EDITAR LIVRO---\n\n");
     printf("Digite o identificador do livro: ");
     scanf("%d", &id);
@@ -431,7 +439,7 @@ void editar_livro(Livro **livros)
 
     while (livro_atual != NULL)
     {
-        if(livro_atual->identificador == id)
+        if (livro_atual->identificador == id)
         {
             printf("\nTitulo atual: %s\n", livro_atual->titulo);
             printf("Digite o novo titulo do livro: ");
@@ -474,12 +482,11 @@ void imprimir_livros(Livro **livros)
             imprimir_autores(&livro_atual);
             livro_atual = livro_atual->prox;
         }
-        
     }
     system("pause");
 }
 
-void liberar_livros(Livro **livros) 
+void liberar_livros(Livro **livros)
 {
     Livro *livro_atual = *livros;
     Livro *prox_livro = NULL;
@@ -520,14 +527,14 @@ void imprimir_autores(Livro **livro_sel)
     printf("Autores:");
     while (autor_atual != NULL)
     {
-        if(autor_atual->prox == NULL)
+        if (autor_atual->prox == NULL)
             printf(" %s", autor_atual->nome);
         else
             printf(" %s,", autor_atual->nome);
         autor_atual = autor_atual->prox;
     }
     printf("\n");
-}   
+}
 
 void liberar_autores(Livro **livro_sel)
 {
@@ -541,8 +548,6 @@ void liberar_autores(Livro **livro_sel)
         free(autor_atual);
         autor_atual = prox_autor;
     }
-    
-
 }
 
 void editar_autores(Livro **livro_sel)
@@ -550,7 +555,7 @@ void editar_autores(Livro **livro_sel)
     Livro *livro_atual = *livro_sel;
     Autor *autor_atual = livro_atual->autores;
     int cont = 1;
-    while(autor_atual != NULL)
+    while (autor_atual != NULL)
     {
         printf("Autor %d atual: %s\n", cont, autor_atual->nome);
         printf("Digite o novo nome do autor %d: ", cont);
@@ -562,7 +567,7 @@ void editar_autores(Livro **livro_sel)
 
 void menu_reserva(Usuario **usuarios, Livro **livros, Reserva **reservas, int *quantidade_reservas)
 {
-     int escolha = 0;
+    int escolha = 0;
 
     while (escolha != 4)
     {
@@ -580,13 +585,13 @@ void menu_reserva(Usuario **usuarios, Livro **livros, Reserva **reservas, int *q
         switch (escolha)
         {
         case 1:
-            adicionar_reserva();
+            adicionar_reserva(usuarios, livros, reservas, quantidade_reservas);
             break;
         case 2:
-            editar_reserva();
+            editar_reserva(usuarios, livros, reservas);
             break;
         case 3:
-            excluir_reserva();
+            excluir_reserva(reservas);
             break;
         case 4:
             break;
@@ -598,24 +603,256 @@ void menu_reserva(Usuario **usuarios, Livro **livros, Reserva **reservas, int *q
     }
 }
 
-void adicionar_reserva()
+int verificar_id_livro(Livro **livros, int id)
 {
-
+    Livro *atual = *livros;
+    int verificar = 1; // falso se encontrar o ID
+    while(atual != NULL)
+    {
+        if (atual->identificador == id)
+        {
+            verificar = 0;
+            break;
+        }
+        atual = atual->prox;
+    }
+    if (verificar)
+    {
+        printf("ID invalido, digite novamente: ");
+    }
+    return verificar;
 }
 
-void excluir_reserva()
+int verificar_id_usuario(Usuario **usuarios, int id)
 {
-
+    Usuario *atual = *usuarios;
+    int verificar = 1; // falso se encontrar o ID
+    while(atual != NULL)
+    {
+        if (atual->identificador == id)
+        {
+            verificar = 0;
+            break;
+            
+        }
+        atual = atual->prox;
+    }
+    if (verificar)
+    {
+        printf("ID invalido, digite novamente: ");
+    }
+    return verificar;
 }
 
-void editar_reserva()
+void adicionar_reserva(Usuario **usuarios, Livro **livros, Reserva **reservas, int *quantidade_reservas)
 {
+    system("cls");
+    int id, tempo;
+    Reserva *novaReserva = malloc(sizeof(Reserva));
+    printf("---ADICIONAR RESERVA---\n\n");
+    printf("Digite os dados da reserva:\n\n");
 
+    printf("ID do livro reservado: ");
+    do
+    {
+        scanf("%d", &id);
+        getchar();
+    } while (verificar_id_livro(livros, id));
+    novaReserva->id_livro = id;
+
+    printf("ID do usuario responsavel pela reserva: ");
+    do
+    {
+        scanf("%d", &id);
+        getchar();
+    } while (verificar_id_usuario(usuarios, id));
+    novaReserva->id_usuario = id;
+    
+    printf("Dia do inicio da reserva: ");
+    scanf("%d", &tempo);
+    getchar();
+    novaReserva->inicio.dia = tempo;
+    printf("Mes do inicio da reserva: ");
+    scanf("%d", &tempo);
+    getchar();
+    novaReserva->inicio.mes = tempo;
+    printf("Ano do inicio da reserva: ");
+    scanf("%d", &tempo);
+    getchar();
+    novaReserva->inicio.ano = tempo;
+
+    printf("Dia do fim da reserva: ");
+    scanf("%d", &tempo);
+    getchar();
+    novaReserva->fim.dia = tempo;
+    printf("Mes do fim da reserva: ");
+    scanf("%d", &tempo);
+    getchar();
+    novaReserva->fim.mes = tempo;
+    printf("Ano do fim da reserva: ");
+    scanf("%d", &tempo);
+    getchar();
+    novaReserva->fim.ano = tempo;
+    
+    novaReserva->identificador = *quantidade_reservas + 1;
+    *quantidade_reservas = *quantidade_reservas + 1;
+
+    novaReserva->prox = *reservas;
+    *reservas = novaReserva;
 }
 
-void imprimir_reservas()
+void excluir_reserva(Reserva **reservas)
 {
+    Reserva *reserva_atual = *reservas;
+    Reserva *reserva_anterior = NULL;
+    int id, v = 1;
 
+    system("cls");
+
+    printf("---EXCLUIR RESERVA---\n\n");
+    printf("Digite o identificador da reserva: ");
+    scanf("%d", &id);
+    getchar();
+
+    while (reserva_atual != NULL)
+    {
+        if (reserva_atual->identificador == id)
+        {
+            v = 0;
+            if (reserva_anterior == NULL)
+                *reservas = reserva_atual->prox;
+            else
+                reserva_anterior->prox = reserva_atual->prox;
+            free(reserva_atual);
+            break;
+        }
+        reserva_anterior = reserva_atual;
+        reserva_atual = reserva_atual->prox;
+    }
+
+    if (v)
+        printf("\nReserva nao encontrada\n");
+    else
+        printf("\nReserva excluida com sucesso\n");
+
+    system("pause");
+}
+
+void editar_reserva(Usuario **usuarios, Livro **livros, Reserva **reservas)
+{
+    int id, id_temp;
+
+    system("cls");
+
+    printf("---EDITAR RESERVA---\n\n");
+    printf("Digite o identificador da reserva: ");
+    scanf("%d", &id);
+    getchar();
+
+    Reserva *reserva_atual = *reservas;
+
+    while (reserva_atual != NULL)
+    {
+        if (reserva_atual->identificador == id)
+        {
+            printf("\nID do usuario atual: %d\n", reserva_atual->id_usuario);
+            printf("Digite o novo ID do usuario responsavel pela reserva: ");
+            do
+            {
+                scanf("%d", &id_temp);
+                getchar();
+            } while (verificar_id_usuario(usuarios, id_temp));
+            reserva_atual->id_usuario = id_temp;
+
+            printf("\nID do livro atual: %d\n", reserva_atual->id_usuario);
+            printf("Digite o novo ID do livro reservado: ");
+            do
+            {
+                scanf("%d", &id_temp);
+                getchar();
+            } while (verificar_id_livro(livros, id_temp));
+            reserva_atual->id_livro = id_temp;
+
+            printf("\nDia do inicio da reserva atual: %d\n", reserva_atual->inicio.dia);
+            printf("Digite o novo dia do inicio da reserva: ");
+            scanf("%d", &reserva_atual->inicio.dia);
+            getchar();
+
+            printf("\nMEs do inicio da reserva atual: %d\n", reserva_atual->inicio.mes);
+            printf("Digite o novo mes do inicio da reserva: ");
+            scanf("%d", &reserva_atual->inicio.mes);
+            getchar();
+
+            printf("\nAno do inicio da reserva atual: %d\n", reserva_atual->inicio.ano);
+            printf("Digite o novo ano do inicio da reserva: ");
+            scanf("%d", &reserva_atual->inicio.ano);
+            getchar();
+
+            printf("\nDia do fim da reserva atual: %d\n", reserva_atual->fim.dia);
+            printf("Digite o novo dia do inicio da reserva: ");
+            scanf("%d", &reserva_atual->fim.dia);
+            getchar();
+
+            printf("\nMes do fim da reserva atual: %d\n", reserva_atual->fim.mes);
+            printf("Digite o novo mes do inicio da reserva: ");
+            scanf("%d", &reserva_atual->fim.mes);
+            getchar();
+
+            printf("\nAno do fim da reserva atual: %d\n", reserva_atual->fim.ano);
+            printf("Digite o novo ano do inicio da reserva: ");
+            scanf("%d", &reserva_atual->fim.ano);
+            getchar();
+            
+            break;
+        }
+        *reserva_atual = *reserva_atual->prox;
+    }
+}
+
+void imprimir_reservas(Reserva **reservas, Usuario **usuarios, Livro **livros)
+{
+    Reserva *reserva_atual = *reservas;
+    Usuario *usuario_atual = *usuarios;
+    Livro *livro_atual = *livros;
+    if (reserva_atual == NULL)
+    {
+        printf("A lista de reservas esta vazia.\n");
+    }
+    else
+    {
+        while (reserva_atual != NULL)
+        {
+            while (usuario_atual != NULL)
+            {
+                if (usuario_atual->identificador == reserva_atual->id_usuario)
+                    break;
+                usuario_atual = usuario_atual->prox;
+            }
+            while (livro_atual != NULL)
+            {
+                if (livro_atual->identificador == reserva_atual->id_livro)
+                    break;
+                livro_atual = livro_atual->prox;
+            }
+            printf("\nID reserva: %d, ID livro: %d, Titulo do livro: %s, ID usuario: %d, Nome do usuario: %s\n", reserva_atual->identificador, reserva_atual->id_livro, livro_atual->titulo, reserva_atual->id_usuario, usuario_atual->nome);
+            printf("Data inicio: %02d/%02d/%04d, Data fim: %02d/%02d/%04d\n", reserva_atual->inicio.dia, reserva_atual->inicio.mes, reserva_atual->inicio.ano, reserva_atual->fim.dia, reserva_atual->fim.mes, reserva_atual->fim.ano);
+            reserva_atual = reserva_atual->prox;
+        }
+    }
+    system("pause");
+}
+
+void liberar_reservas(Reserva **reservas)
+{
+    Reserva *reserva_atual = *reservas;
+    Reserva *prox_reserva = NULL;
+
+    while (reserva_atual != NULL)
+    {
+        prox_reserva = reserva_atual->prox;
+        free(reserva_atual);
+        reserva_atual = prox_reserva;
+    }
 }
 
 void menu_relatorio(Usuario **usuarios, Livro **livros, Reserva **reservas)
@@ -637,15 +874,19 @@ void menu_relatorio(Usuario **usuarios, Livro **livros, Reserva **reservas)
         switch (escolha)
         {
         case 1:
-            // endereco de usuarios na main
             imprimir_usuarios(usuarios);
             break;
         case 2:
             imprimir_livros(livros);
             break;
         case 3:
-            imprimir_reservas();
+            imprimir_reservas(reservas, usuarios, livros);
             break;
+        case 4:
+            break;
+        default:
+            printf("Opcao Invalida.\n");
+            system("pause");
         }
     }
 }
