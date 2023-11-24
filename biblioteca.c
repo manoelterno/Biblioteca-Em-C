@@ -23,7 +23,7 @@ typedef struct data
 typedef struct autor
 {
     char nome[MAX];
-    struct Autor *prox;
+    struct autor *prox;
 } Autor;
 
 typedef struct livro
