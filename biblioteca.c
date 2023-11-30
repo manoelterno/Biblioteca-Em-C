@@ -763,7 +763,7 @@ void editar_reserva(Usuario **usuarios, Livro **livros, Reserva **reservas)
             } while (verificar_id_usuario(usuarios, id_temp));
             reserva_atual->id_usuario = id_temp;
 
-            printf("\nID do livro atual: %d\n", reserva_atual->id_usuario);
+            printf("\nID do livro atual: %d\n", reserva_atual->id_livro);
             printf("Digite o novo ID do livro reservado: ");
             do
             {
