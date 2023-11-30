@@ -472,7 +472,7 @@ void imprimir_livros(Livro **livros)
 
     if (livro_atual == NULL)
     {
-        printf("A lista de livros esta vazia.");
+        printf("A lista de livros esta vazia.\n");
     }
     else
     {
