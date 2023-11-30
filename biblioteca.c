@@ -12,7 +12,7 @@
 #include <ctype.h>
 
 // MACROS
-#define MAX 50
+#define MAX 75
 
 // STRUCTS
 typedef struct data
@@ -39,8 +39,8 @@ typedef struct livro
 
 typedef struct usuario
 {
-    long int telefone;
     int identificador;
+    char telefone[MAX];
     char nome[MAX];
     char endereco[MAX];
     struct usuario *prox;
@@ -202,8 +202,7 @@ void adicionar_usuario(Usuario **usuarios, int *quantidade_usuarios)
     gets(novoUsuario->endereco);
 
     printf("Telefone do usuario: ");
-    scanf("%ld", &novoUsuario->telefone);
-    getchar();
+    gets(novoUsuario->telefone);
 
     novoUsuario->identificador = *quantidade_usuarios + 1;
     *quantidade_usuarios = *quantidade_usuarios + 1;
@@ -274,10 +273,10 @@ void editar_usuario(Usuario **usuarios)
             printf("Digite o novo endereco do usuario: ");
             gets(usuario_atual->endereco);
 
-            printf("\nTelefone atual: %ld\n", usuario_atual->telefone);
+            printf("\nTelefone atual: %s\n", usuario_atual->telefone);
             printf("Digite o novo telefone do usuario: ");
-            scanf("%ld", &usuario_atual->telefone);
-            getchar();
+            gets(usuario_atual->telefone);
+
             break;
         }
         usuario_atual = usuario_atual->prox;
@@ -296,7 +295,7 @@ void imprimir_usuarios(Usuario **usuarios)
     {
         while (usuario_atual != NULL)
         {
-            printf("\nID: %d, Nome: %s, Endereco: %s, Telefone: %ld\n", usuario_atual->identificador, usuario_atual->nome, usuario_atual->endereco, usuario_atual->telefone);
+            printf("\nID: %d, Nome: %s, Endereco: %s, Telefone: %s\n", usuario_atual->identificador, usuario_atual->nome, usuario_atual->endereco, usuario_atual->telefone);
             usuario_atual = usuario_atual->prox;
         }
     }
@@ -472,7 +471,7 @@ void imprimir_livros(Livro **livros)
 
     if (livro_atual == NULL)
     {
-        printf("A lista de livros esta vazia.\n");
+        printf("A lista de livros esta vazia.");
     }
     else
     {
@@ -633,7 +632,7 @@ int verificar_id_usuario(Usuario **usuarios, int id)
         {
             verificar = 0;
             break;
-            
+
         }
         atual = atual->prox;
     }
@@ -667,7 +666,7 @@ void adicionar_reserva(Usuario **usuarios, Livro **livros, Reserva **reservas, i
         getchar();
     } while (verificar_id_usuario(usuarios, id));
     novaReserva->id_usuario = id;
-    
+
     printf("Dia do inicio da reserva: ");
     scanf("%d", &tempo);
     getchar();
@@ -693,7 +692,7 @@ void adicionar_reserva(Usuario **usuarios, Livro **livros, Reserva **reservas, i
     scanf("%d", &tempo);
     getchar();
     novaReserva->fim.ano = tempo;
-    
+
     novaReserva->identificador = *quantidade_reservas + 1;
     *quantidade_reservas = *quantidade_reservas + 1;
 
@@ -802,7 +801,7 @@ void editar_reserva(Usuario **usuarios, Livro **livros, Reserva **reservas)
             printf("Digite o novo ano do inicio da reserva: ");
             scanf("%d", &reserva_atual->fim.ano);
             getchar();
-            
+
             break;
         }
         *reserva_atual = *reserva_atual->prox;
